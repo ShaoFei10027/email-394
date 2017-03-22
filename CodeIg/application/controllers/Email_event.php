@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends CI_Controller {
+class Email_event extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -20,18 +20,22 @@ class Home extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->model('table');
-		$this->table->index();
-		$this->load->view('table');
-
+		$this->load->model('event');
+		$data = json_decode(json_encode($this->event->index()[0]),true);
+		$data['user'] = json_decode(json_encode($this->event->getUserInfo()),true);
+		$this->load->view('email_event',$data);
 	}
-	public function getres()
-	{
-		$this->load->model('table');
-		
+	public function userinfo(){
+		$this->load->model('event');
 		header('Content-Type: application/json;charset=utf-8', true, 200);
-		echo json_encode($this->table->index());
-		//var_dump($this->table->tableData);
-		//return $this->table->tableData;
+		echo json_encode($this->event->getUserInfo());
+	}
+	public function create(){
+		$this->load->view('create');
+	}
+	public function createdeal(){
+		$this->load->model('event');
+		$data['dealresult'] = $this->event->dealWithCreate();
+		$this->load->view('create_result',$data);
 	}
 }
